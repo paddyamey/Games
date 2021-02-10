@@ -32,6 +32,7 @@ while True:
             word_length = set([len(item) for item in word_list])
 
             while True:
+                # input validation
                 try:
                     length = int(input(f"How many letters would you like the word to be, you can choose from {word_length}:"))
 
