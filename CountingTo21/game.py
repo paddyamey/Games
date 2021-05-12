@@ -26,31 +26,30 @@ def closest_multiple(number, number_m):
     return number
 
 
-def validate_user_input(numbers_entered, user_input):
-
-    user_list = user_input.split(",")
+def validate_user_input(numbers_entered, user_input_list):
 
     #  check no more than three numbers have been entered
-    if len(user_list) > 3:
+    if len(user_input_list) > 3:
         return False
 
     #  the input should all be separated by comas if they are not the input will be split incorrectly
-    number_checker = [item.isnumeric() for item in user_list]
+    number_checker = [item.isnumeric() for item in user_input_list]
     if False in number_checker:
         return False
 
     #  check for 1-3 consecutive numbers
-    if len(user_list) == 3:
-        if int(user_list[2]) - int(user_list[0]) != 2:
+    if len(user_input_list) == 3:
+        if int(user_input_list[2]) - int(user_input_list[0]) != 2:
             return False
-    elif len(user_list) == 2:
-        if int(user_list[1]) - int(user_list[0]) != 1:
+    elif len(user_input_list) == 2:
+        if int(user_input_list[1]) - int(user_input_list[0]) != 1:
             return False
 
     # the input must start after the previous output
-    if int(user_list[0]) - int(numbers_entered[-1]) != 1:
+    if int(user_input_list[0]) - int(numbers_entered[-1]) != 1:
         return False
 
+    return True
 
 
 
@@ -58,8 +57,7 @@ def validate_user_input(numbers_entered, user_input):
 # coin_toss = random.randint(1, 2)
 coin_toss = 2
 number_list = list(range(1,22))
-
-#TODO: create function to validate user input
+numbers_entered = []
 #TODO: create list to keep note of every number used so far
 
 if  coin_toss == 1:
@@ -78,37 +76,43 @@ if  coin_toss == 1:
 
         if difference == 1:
             print(f"Computer: {number}")
+            numbers_entered.append(number)
 
         elif difference == 2:
             print(f"Computer: {number-1},{number}")
+            numbers_entered.append(number - 1)
+            numbers_entered.append(number)
 
         else:
             print(f"Computer: {number-2},{number-1},{number}")
-
+            numbers_entered.append(number - 2)
+            numbers_entered.append(number - 1)
+            numbers_entered.append(number)
 
         # verify player has not entered a number with a difference greater than 3
         while True:
 
             user_number_list = input("Input your number separated by comas:").split(",")
-            try:
-                user_number = int(user_number_list[-1])
 
-                if int(user_number) - number < 4:
+            try:
+                if validate_user_input(numbers_entered, user_number_list):
+                    user_number = int(user_number_list[-1])
                     number = user_number
+                    numbers_entered.extend([int(value) for value in user_number_list])
+
                     break
-                elif user_number < number:
-                    print(f"You must enter a number higher than {number}.")
                 else:
-                    print("Invalid input, you can only go up 3 numbers.")
+                    print("Invalid input, you must enter three consecutive numbers separated by comas.")
+
 
             except ValueError:
                 print("You must enter a number.")
 
-        #TODO: correct logic to prevent user from surpassing 21 if they enter it as e.g. 21,22,23
         for value in user_number_list:
-            if value == 21:
+            if value == str(21):
                 print("You have been defeated by the computer.")
-                break
+                exit()
+
 
         if number == 21:
             print("You have been defeated by the computer.")
@@ -133,27 +137,35 @@ else:
 
         # verify player has not entered a number with a difference greater than 3
         while True:
-
             user_number_list = input("Input your number separated by comas:").split(",")
-            try:
-                user_number = int(user_number_list[-1])
 
-                if int(user_number) < 4:
+            try:
+                if int(user_number_list[-1]) < 4:
+                    user_number = int(user_number_list[-1])
                     number = user_number
+                    numbers_entered.extend([int(value) for value in user_number_list])
                     break
-                elif user_number < number:
-                    print(f"You must enter a number higher than {number}.")
-                elif int(user_number) - number < 4:
+
+                elif validate_user_input(numbers_entered, user_number_list):
+                    user_number = int(user_number_list[-1])
                     number = user_number
+                    numbers_entered.extend([int(value) for value in user_number_list])
                     break
+
                 else:
-                    print("Invalid input, you can only go up 3 numbers.")
+                    print("Invalid input, you must enter three consecutive numbers separated by comas.")
+
 
             except ValueError:
                 print("You must enter a number.")
             except NameError:
                 print("You can only go up 3 numbers.")
 
+
+        for value in user_number_list:
+            if value == str(21):
+                print("You have been defeated by the computer.")
+                exit()
 
         if number == 21:
             print("You have been defeated by the computer.")
@@ -181,12 +193,18 @@ else:
 
         if difference == 1:
             print(f"Computer: {number}")
+            numbers_entered.append(number)
 
         elif difference == 2:
             print(f"Computer: {number-1},{number}")
+            numbers_entered.append(number - 1)
+            numbers_entered.append(number)
 
         else:
             print(f"Computer: {number-2},{number-1},{number}")
+            numbers_entered.append(number - 2)
+            numbers_entered.append(number - 1)
+            numbers_entered.append(number)
 
 
 
